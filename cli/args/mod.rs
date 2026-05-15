@@ -145,9 +145,14 @@ impl FmtOptions {
     fmt_config: FmtConfig,
     unstable: UnstableFmtOptions,
     fmt_flags: &FmtFlags,
+    maybe_config_dir: Option<&Path>,
   ) -> Self {
+    let mut options = resolve_fmt_options(fmt_flags, fmt_config.options);
+    if let Some(dir) = maybe_config_dir {
+      crate::tools::editorconfig::maybe_apply_editorconfig(dir, &mut options);
+    }
     Self {
-      options: resolve_fmt_options(fmt_flags, fmt_config.options),
+      options,
       unstable: UnstableFmtOptions {
         component: unstable.component || fmt_flags.unstable_component,
         sql: unstable.sql || fmt_flags.unstable_sql,
@@ -907,7 +912,13 @@ impl CliOptions {
     let unstable = self.resolve_config_unstable_fmt_options();
     let mut result = Vec::with_capacity(member_configs.len());
     for (ctx, config) in member_configs {
-      let options = FmtOptions::resolve(config, unstable.clone(), fmt_flags);
+      let dir = ctx.dir_path();
+      let options = FmtOptions::resolve(
+        config,
+        unstable.clone(),
+        fmt_flags,
+        Some(&dir),
+      );
       result.push((ctx, options));
     }
     Ok(result)
