@@ -63,12 +63,14 @@ pub async fn format(
     let factory = CliFactory::from_flags(flags);
     let cli_options = factory.cli_options()?;
     let start_dir = &cli_options.start_dir;
+    let start_dir_path = start_dir.dir_path();
     let fmt_config = start_dir
       .to_fmt_config(FilePatterns::new_with_base(start_dir.dir_path()))?;
     let fmt_options = FmtOptions::resolve(
       fmt_config,
       cli_options.resolve_config_unstable_fmt_options(),
       &fmt_flags,
+      Some(&start_dir_path),
     );
     return format_stdin(
       &fmt_flags,

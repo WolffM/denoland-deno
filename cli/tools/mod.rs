@@ -9,6 +9,7 @@ pub mod compile;
 pub mod coverage;
 pub mod deploy;
 pub mod doc;
+pub mod editorconfig;
 pub mod fmt;
 pub mod framework;
 pub mod info;
