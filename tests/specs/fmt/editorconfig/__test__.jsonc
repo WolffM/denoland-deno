@@ -1,0 +1,20 @@
+{
+  "tempDir": true,
+  "tests": {
+    "tab_indent_from_editorconfig": {
+      // .editorconfig sets indent_style = tab; deno.json has no fmt options.
+      // deno fmt --check should accept the tab-indented file because it reads
+      // the indent_style from .editorconfig.
+      "args": "fmt --check main.ts",
+      "output": "Checked 1 file\n"
+    },
+    "deno_config_overrides_editorconfig": {
+      // When deno.json explicitly sets useTabs = false, it takes precedence
+      // over .editorconfig's indent_style = tab.  The file uses tabs so it
+      // should fail the check.
+      "args": "fmt --check --config deno_spaces.json main.ts",
+      "output": "[WILDCARD]not formatted[WILDCARD]",
+      "exitCode": 1
+    }
+  }
+}
